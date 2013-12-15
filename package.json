@@ -8,7 +8,7 @@
   },
   "repository": {
       "type": "git",
-      "url": "	git@github.com:FlyingJalapeno/PodcastServer.git"
+      "url": "git@github.com:FlyingJalapeno/PodcastServer.git"
     },
   "author": "Corey Floyd",
   "license": "BSD-2-Clause",
