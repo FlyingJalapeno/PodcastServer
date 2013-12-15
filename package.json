@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-      "type": "git",
-      "url": "git@github.com:FlyingJalapeno/PodcastServer.git"
-    },
+    "type": "git",
+    "url": "git@github.com:FlyingJalapeno/PodcastServer.git"
+  },
   "author": "Corey Floyd",
   "license": "BSD-2-Clause",
   "dependencies": {
