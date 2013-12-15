@@ -15,14 +15,16 @@ var stories = [];
 
 nodeio.scrape(function() {
     this.getHtml('http://www.reddit.com/', function(err, $) {
+
         $('a.title').each(function(title) {
+			console.log(title.text);
             stories.push(title.text);
         });
-        this.emit(stories);
+		
+		console.log("collected " + stories.length + " stories");
     });
 });
 
-
 app.get('/', function(req, res) {
-  res.send('Hello World! - here are reddit stories: ' stories);
+  res.send('Hello World! - here are reddit stories: ' + stories);
 });
