@@ -1,6 +1,9 @@
 //Logging
 var logfmt = require("logfmt");
 
+//DB
+mongoose = require('mongoose');
+
 //Web API
 var express = require("express");
 
@@ -10,6 +13,17 @@ var https = require('https');
 
 //DOM
 var cheerio = require("cheerio");
+
+//Setup DB
+var uristring = process.env.MONGOLAB_URI || 'mongodb://localhost/podcastdatabase';
+
+mongoose.connect(uristring, function (err, res) {
+    if (err) {
+         console.log('ERROR: ' + err);
+    } else {
+        console.log('Connected to database');
+    }
+});
 
 //Setup server
 var app = express();
@@ -36,8 +50,9 @@ var download = function(url, callback) {
   });
 }
 
-
 var scrapePodcasts = function(callback) {
+
+    schema = require('./schema');
     
     var url = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2"
 
