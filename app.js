@@ -45,17 +45,32 @@ var scrapePodcasts = function(callback) {
           if (data) {
      
             var $ = cheerio.load(data);
-
-            console.log();   
-
-            $('#main', 'body').
-            $('body').children().each(function(index, element) {
+            
+           $('#main', 'body').children('#content').children('.padder').children('#genre-nav').children('.grid3-column').children().each(function(index, element) {
                 
-                console.log($(element).attr('class'));   
-             
+
+                $(element).children().each(function(index, element) {
+                    
+                    console.log($(element).children('a').attr('title'));
+                    console.log($(element).children('a').attr('href'));
+
+                    console.log("Sub Genres:");
+
+                    $(element).children('ul').children().each(function(index, element) {
+                       
+                    console.log($(element).children('a').attr('title'));
+                    console.log($(element).children('a').attr('href'));
+
+                     console.log("-------------");
+
+                        
+                    });
+
+                    console.log("----------------------------------");
+                });
             });
             
-            console.log("----------------------------------");
+
     //        console.log("grid: " + $("grid3-column"));
 
             

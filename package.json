@@ -1,7 +1,7 @@
 {
   "name": "PodcastServer",
   "version": "0.0.0",
-  "description": "",
+  "description": "the most awesomest podcast server eva",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,8 +16,8 @@
     "logfmt": "~0.18.1",
     "express": "~3.4.7",
     "mongodb": "~1.3.23",
-    "node.io": "~0.5.1",
     "cheerio": "~0.12.4",
-    "node-parse-api": "~0.2.2"
+    "node-parse-api": "~0.2.2",
+    "mongoose": "~3.8.3"
   }
 }
