@@ -1,3 +1,6 @@
+//File System
+var fs = require('fs');
+
 //Logging
 var logfmt = require("logfmt");
 
@@ -25,6 +28,14 @@ mongoose.connect(uristring, function (err, res) {
     }
 });
 
+// Bootstrap models
+var models_path = __dirname + '/models';
+fs.readdirSync(models_path).forEach(function (file) {
+  if (~file.indexOf('.js')) 
+    require(models_path + '/' + file);
+});
+
+
 //Setup server
 var app = express();
 app.use(logfmt.requestLogger());
@@ -48,13 +59,11 @@ var download = function(url, callback) {
   }).on("error", function() {
     callback(null);
   });
-}
+};
 
 var scrapePodcasts = function(callback) {
-
-    schema = require('./schema');
     
-    var url = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2"
+    var url = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
 
         download(url, function(data) {
           if (data) {
@@ -108,7 +117,7 @@ var scrapePodcasts = function(callback) {
           else console.log("error");  
         });
    
-}
+};
 
 //API GET
 app.get('/', function(req, res) {
