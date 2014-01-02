@@ -34,7 +34,7 @@ var saveChildGenre = function(item, callback) {
                            
         // console.log('scraper sub-genre: ' + genre.name);        
         
-        callback(null);
+        callback(null, genre);
         
      });               
 };
@@ -45,12 +45,18 @@ var saveParentGenre = function(item, callback) {
                                        
         // console.log('scraper genre: ' + genre.name);
         
-        async.each(item.subGenres, saveChildGenre, function(err){
-    
-            callback(null, genre);
-    
+        async.map(item.subGenres, saveChildGenre, function(err, subGenres){
+            
+            console.log('scraper genre: ' + genre.name);
+            console.log('subgenres: ' + subGenres);
+            console.log('---------------------------');
+            
+            genres.addChildrenGenres(genre, subGenres, function(){
+            
+                callback(null, genre);    
+                
+            });
         });            
-        
      });               
 };
 
