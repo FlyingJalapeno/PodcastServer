@@ -9,7 +9,6 @@ var express = require("express");
 
 //Setup DB
 var uristring = process.env.MONGOLAB_URI || 'mongodb://localhost/podcastdatabase';
-
 mongoose.connect(uristring, function (err, res) {
     if (err) {
          console.log('ERROR: ' + err);
@@ -33,6 +32,11 @@ require('./config/express')(app);
 //Bootstrap routes
 require('./config/routes')(app);
 
+//REPL - console
+//Access from the command line by: rc /tmp/repl/podcast-server.sock
+var Genre = mongoose.model('Genre');
+var replify = require('replify');
+replify('podcast-server', app, [{'Genre':Genre}]);
 
 //Start Server
 var port = process.env.PORT || 5000;

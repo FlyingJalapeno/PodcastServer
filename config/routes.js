@@ -1,5 +1,5 @@
 //Web API
-var express = require("express");
+var express = require('express');
 
 var scraper = require('../app/controllers/scraper');
 

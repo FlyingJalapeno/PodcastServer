@@ -1,3 +1,6 @@
+//Async functions
+var async = require('async');
+
 //HTTP Connections
 var http = require('http');
 var https = require('https');
@@ -24,23 +27,50 @@ var download = function(url, callback) {
   });
 };
 
-exports.scrape = function(req, res){
+//Save Genres to DB
+var saveChildGenre = function(item, callback) {
+  
+    genres.findOrCreateGenre(item.title, '', item.url, function(genre){
+                           
+        // console.log('scraper sub-genre: ' + genre.name);        
+        
+        callback(null);
+        
+     });               
+};
+
+var saveParentGenre = function(item, callback) {
     
-    this.scrapeGenres({
+    genres.findOrCreateGenre(item.title, '', item.url, function(genre){
+                                       
+        // console.log('scraper genre: ' + genre.name);
         
-        
-        
-        
-    });
+        async.each(item.subGenres, saveChildGenre, function(err){
     
+            callback(null, genre);
+    
+        });            
+        
+     });               
+};
+
+var saveGenres = function(genreData, callback) {
+    
+    async.map(genreData, saveParentGenre, function(err, results){
+
+        callback(null, results);
+
+    });            
 };
 
 //Scrape Genres
 var scrapeGenres = function(callback) {
     
+    var genreData = [];
     var url = 'https://itunes.apple.com/us/genre/podcasts/id26?mt=2';
 
         download(url, function(data) {
+            
           if (data) {
      
             var $ = cheerio.load(data);
@@ -51,39 +81,41 @@ var scrapeGenres = function(callback) {
                                         
                     var title = $(element).children('a').attr('title');
                     var url = $(element).children('a').attr('href');
-                    
-                    genres.findOrCreateGenre(title, '', url, function(genre){
-                                                
-                        console.log(genre.title);
-                        console.log(genre.url);
-                        
-                    });
-                    
-
-                    console.log('Sub Genres:');
-
+                              
+                    var childGenreData = [];
+                                                                            
                     $(element).children('ul').children().each(function(index, element) {
                        
                         var title = $(element).children('a').attr('title');
                         var url = $(element).children('a').attr('href');
 
-
-                        genres.findOrCreateGenre(title, '', url, function(genre){
-                        
-                            console.log(genre.title);
-                            console.log(genre.url);
-                        
-                            console.log('-------------');
-                        
-                        });
-                       
+                        childGenreData.push({title: title, url: url});                       
                         
                     });
 
-                    console.log('----------------------------------');
+                    genreData.push({title: title, url: url, subGenres: childGenreData});
+
                 });
             });
             
+            saveGenres(genreData, function (err, savedGenres) {
+                
+                console.log('Done!');
+                console.log(savedGenres.length);
+                console.log(savedGenres);
+                callback(null, savedGenres);
+                
+            });
+            
+          }else{
+              
+              console.log('error');  
+              callback('error', null);
+            
+          } 
+        });
+        
+};
 
    // console.log("grid: " + $("grid3-column"));
 // 
@@ -103,16 +135,21 @@ var scrapeGenres = function(callback) {
 //    });
 
 
-          }
-          else console.log('error');  
-        });
-   
-};
-
 
 //Scrape Podcasts
 var scrapePodcasts = function(callback) {
     
     
+    
+};
+
+//Scrape
+exports.scrape = function(req, res){
+        
+    scrapeGenres( function(err, genres) {
+                
+        res.send('success!: ' + genres);
+                
+    });
     
 };
