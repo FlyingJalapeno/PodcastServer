@@ -23,5 +23,4 @@ PodcastSchema.static = {
 
 exports.PodcastModel = mongoose.model('Podcast', PodcastSchema);
 
-
 console.log('Podcast Schema Loaded!');

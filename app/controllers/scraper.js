@@ -28,35 +28,34 @@ var download = function(url, callback) {
 };
 
 //Save Genres to DB
-var saveChildGenre = function(item, callback) {
-  
-    genres.findOrCreateGenre(item.title, '', item.url, function(genre){
-                           
-        // console.log('scraper sub-genre: ' + genre.name);        
-        
-        callback(null, genre);
-        
-     });               
-};
-
 var saveParentGenre = function(item, callback) {
     
     genres.findOrCreateGenre(item.title, '', item.url, function(genre){
-                                       
-        // console.log('scraper genre: ' + genre.name);
+                                                                          
+        async.map(item.subGenres, 
+            
+            function(item, callback) {
+  
+                genres.findOrCreateGenre(item.title, '', item.url, function(genre){
+                          
+                    callback(null, genre);
         
-        async.map(item.subGenres, saveChildGenre, function(err, subGenres){
+                 });               
+            }, 
             
-            console.log('scraper genre: ' + genre.name);
-            console.log('subgenres: ' + subGenres);
-            console.log('---------------------------');
-            
-            genres.addChildrenGenres(genre, subGenres, function(){
-            
-                callback(null, genre);    
+            function(err, subGenres){
+                        
+                genres.addChildrenGenres(genre, subGenres, function(){
+                    
+                    callback(null, genre);    
+                    
+                });      
                 
-            });
-        });            
+                      
+            }
+        );            
+        
+        
      });               
 };
 
@@ -106,9 +105,6 @@ var scrapeGenres = function(callback) {
             
             saveGenres(genreData, function (err, savedGenres) {
                 
-                console.log('Done!');
-                console.log(savedGenres.length);
-                console.log(savedGenres);
                 callback(null, savedGenres);
                 
             });
@@ -141,20 +137,30 @@ var scrapeGenres = function(callback) {
 //    });
 
 
-
-//Scrape Podcasts
-var scrapePodcasts = function(callback) {
-    
-    
-    
-};
-
-//Scrape
+//Scrape Genres
 exports.scrape = function(req, res){
         
-    scrapeGenres( function(err, genres) {
+    scrapeGenres(function(err, scrapedGenres) {
                 
-        res.send('success!: ' + genres);
+        console.log('Done!');
+                                        
+        async.each(scrapedGenres, 
+        
+            function(item, callback) {
+  
+                genres.printGenre(item, function(){
+            
+                    callback(null);
+                });
+            },
+        
+            function(err){
+                    
+                res.send('success!' + scrapedGenres);
+                    
+            }
+        );                             
+          
                 
     });
     

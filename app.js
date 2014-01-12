@@ -32,12 +32,6 @@ require('./config/express')(app);
 //Bootstrap routes
 require('./config/routes')(app);
 
-//REPL - console
-//Access from the command line by: rc /tmp/repl/podcast-server.sock
-var Genre = mongoose.model('Genre');
-var replify = require('replify');
-replify('podcast-server', app, [{'Genre':Genre}]);
-
 //Start Server
 var port = process.env.PORT || 5000;
 app.listen(port, function() {

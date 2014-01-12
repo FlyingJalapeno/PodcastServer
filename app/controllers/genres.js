@@ -4,33 +4,40 @@ var async = require('async');
 //DB
 var mongoose = require('mongoose');
 
+//Genre
+var Genre = mongoose.model('Genre');
+
+var getiTunesIDWithWebURL = function (url, callback){
+  
+    
+    
+    
+    
+};
+
+
 exports.findOrCreateGenre = function (name, id, url, callback) {
-	
-    //Genre Model
-    var Genre = mongoose.model('Genre');
-        
-    Genre.findGenreWithiTunesID(id, function(error, genre){
+
+    Genre.findGenreWithName(name, function(error, genre){
             
         if(!genre){
-            
-            var theDate = Date.now();
-            //console.log(theDate);
-            
+                        
             genre = new Genre({
                 name: name, 
                 iTunesID: id,
-                updatedAt: theDate   
+                webURL: url,
+                updatedAt: Date.now()   
             });
-            
             genre.save();
-            //console.log('new genre: ' + genre);      
     
         }else{
             
-            //console.log('found genre: ' + genre);        
+            genre.name = name;
+            genre.iTunesID = id;
+            genre.updatedAt = Date.now();
+            genre.save();
             
         }
-    
         callback(genre);    
         
     });
@@ -42,7 +49,6 @@ exports.addChildrenGenres = function (genre, childGenres, callback) {
         
         item.parent = genre;
         item.save();
-        
         callback(null);
 
     }, function(err){
@@ -50,9 +56,31 @@ exports.addChildrenGenres = function (genre, childGenres, callback) {
         callback();
 
     });            
-  
-  
     
+};
+
+
+exports.printGenre = function (genre, callback) {
+    
+    Genre.findSubGenresForGenre(genre, function(error, subGenres){
+        
+        console.log('---------------------------');
+        
+        console.log('genre: ' + genre.name);
+        
+        console.log('subgenres(' + subGenres.length + '): ');
+        
+        if(subGenres){
+            subGenres.forEach(function (subGenre){
+                
+                console.log('----subGenre: ' + subGenre.name);
+            });
+        }
+                        
+        console.log('---------------------------');
+        callback(null);
+
+    });    
 };
 
 
