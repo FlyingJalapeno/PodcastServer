@@ -86,7 +86,7 @@ var scrapeGenres = function(callback) {
                                         
                     var title = $(element).children('a').attr('title');
                     var url = $(element).children('a').attr('href');
-                              
+                                                  
                     var childGenreData = [];
                                                                             
                     $(element).children('ul').children().each(function(index, element) {

@@ -34,10 +34,12 @@ exports.findOrCreateGenre = function (name, id, url, callback) {
             
             genre.name = name;
             genre.iTunesID = id;
+            genre.webURL = url;
             genre.updatedAt = Date.now();
             genre.save();
             
         }
+                
         callback(genre);    
         
     });
