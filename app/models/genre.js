@@ -15,6 +15,15 @@ var GenreSchema = new Schema({
 
 GenreSchema.statics = {
     
+    list: function (options, callback) {
+
+        this.find()
+          .sort('name') // sort by name
+          // .limit(options.perPage)
+          // .skip(options.perPage * options.page)
+          .exec(callback); 
+    },
+    
     findGenreWithiTunesID: function (id, callback) {
 
         this.findOne({iTunesID:id})

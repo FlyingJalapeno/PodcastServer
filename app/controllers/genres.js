@@ -15,6 +15,13 @@ var getiTunesIDWithWebURL = function (url, callback){
     
 };
 
+exports.listAllGenres = function (callback) {
+    
+    Genre.list(function(error, genres){
+    
+       callback(genres);
+    });
+};
 
 exports.findOrCreateGenre = function (name, id, url, callback) {
 
@@ -80,9 +87,31 @@ exports.printGenre = function (genre, callback) {
         }
                         
         console.log('---------------------------');
-        callback(null);
+        callback();
 
     });    
+};
+
+exports.printAllGenres = function (callback) {
+    
+    listAllGenres(function(allGenres){
+        
+        async.each(allGenres,
+    
+            function(item, callback) {
+
+                genres.printGenre(item, function(){
+            
+                    callback(null);
+                });
+            },
+    
+            function(error) {
+
+                callback();
+            }
+        );    
+    });   
 };
 
 

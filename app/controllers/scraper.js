@@ -11,6 +11,9 @@ var cheerio = require('cheerio');
 //Genres
 var genres = require('./genres');
 
+//Podcasts
+var podcasts = require('./podcasts');
+
 
 //Download HTML
 var download = function(url, callback) {
@@ -105,63 +108,102 @@ var scrapeGenres = function(callback) {
             
             saveGenres(genreData, function (err, savedGenres) {
                 
-                callback(null, savedGenres);
-                
+                genres.printAllGenres(function(){
+            
+                    callback(null, savedGenres);
+            
+                });                                     
             });
             
           }else{
               
-              console.log('error');  
-              callback('error', null);
+              console.log('error scraping genres');  
+              callback(null);
             
           } 
         });
         
 };
 
-   // console.log("grid: " + $("grid3-column"));
-// 
-//     
-//  $("ul > grid-3-column","genre-nav").each(function(index, element) {
-//         
-//        $(element).children().each(function(index, element) {
-//        
-//            var genreUrl = $(element).attr("a");
-//            console.log("scraped genre url: " + genreURL);
-//            attributes.push(genreUrl);
-//        
-//        });
-//       
-//        console.log("genre nav: " + element);
-// 
-//    });
+//Scrape Podcasts
+var scrapePopularPodcastsForGenre = function($, genre, callback) {
+    
+
+    callback();
+    
+};
 
 
-//Scrape Genres
-exports.scrape = function(req, res){
+var scrapePodcastsForGenre = function(genre, callback) {
+    
+    download(genre.url, function(data) {
         
-    scrapeGenres(function(err, scrapedGenres) {
-                
-        console.log('Done!');
-                                        
-        async.each(scrapedGenres, 
+        if (data) {
+   
+          var $ = cheerio.load(data);
+          
+          scrapePopularPodcastsForGenre($, genre, function(genrePodcasts){
+              
+              callback(genrePodcasts);
+              
+          });
+          
+      }else{
+              
+              console.log('error scraping podcasts');  
+              callback(null);
+            
+          }
+        
+    });
+    
+};
+
+
+var scrapePodcasts = function(callback) {
+    
+    var allPodcasts = [];
+    
+    genres.listAllGenres(function(allGenres){
+        
+        async.each(allGenres,
         
             function(item, callback) {
   
-                genres.printGenre(item, function(){
-            
-                    callback(null);
+                scrapePodcastsForGenre(item, function(allPodcasts){
+                    
+                    allPodcasts.push(podcasts);
+                    
+                    podcasts.printPodcasts(scrapedPodcasts, function(){
+                    
+                        callback(null);                    
+                    });
+                    
                 });
             },
         
-            function(err){
-                    
-                res.send('success!' + scrapedGenres);
-                    
+            function(error) {
+  
+                callback(error, allPodcasts);
             }
-        );                             
-          
+        
+        );    
+        
+    });    
+};
+
+
+
+//Scrape
+exports.scrape = function(req, res){
                 
+    scrapeGenres(function(err, scrapedGenres) {
+
+        scrapePodcasts(scrapedGenres, function(err, scrapedPodcasts){
+                    
+            console.log('Done!');
+            res.send('success!' + scrapedGenres + scrapedPodcasts);
+        
+        });                                          
     });
-    
 };
